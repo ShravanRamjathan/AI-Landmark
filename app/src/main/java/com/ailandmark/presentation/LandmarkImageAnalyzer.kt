@@ -14,12 +14,30 @@ import java.io.ByteArrayOutputStream
 /**
  * This analyzer will get called for each frame
  */
-class LandmarkImageAnalyzer(private val classifier: LandmarkClassifier,
-private val onResults:(List<Classification>)-> Unit): ImageAnalysis.Analyzer{
-
+class LandmarkImageAnalyzer(
+    private val classifier: LandmarkClassifier,
+    private val onResults: (List<Classification>) -> Unit,
+) : ImageAnalysis.Analyzer {
+   private var frameSkipCounter = 0
+    /**
+     * - Retrieves the image rotation degrees.
+     * - Converts the input `ImageProxy` to a `Bitmap`.
+     * - Crops the `Bitmap` to a 321x321 center square.
+     * - Classifies the cropped `Bitmap` using the `classifier`.
+     * - Invokes the `onResults` callback with the classification results.
+     * - Closes the `ImageProxy`.
+     * Additionally, a `frameSkipCounter` has been introduced
+     * to process only every 60th frame, optimizing performance.
+     */
     override fun analyze(image: ImageProxy) {
-        val rotationDegrees = image.imageInfo.rotationDegrees
-        val bitmap = image.toBitmap()
+        if(frameSkipCounter%60==0) {
+            val rotationDegrees = image.imageInfo.rotationDegrees
+            val bitmap = image.toBitmap().centerCrop(321, 321)
+            val results = classifier.classify(bitmap, rotationDegrees)
+            onResults(results)
+            image.close()
+        }
+        frameSkipCounter++
     }
 
     /**
