@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -78,12 +79,13 @@ class MainActivity : ComponentActivity() {
                     Column(
                         Modifier
                             .fillMaxWidth()
-                            .align(Alignment.TopCenter)
+                            .align(Alignment.BottomCenter),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         classifications.forEach {
                             Text(
                                 text = it.name, modifier = Modifier
-                                    .fillMaxWidth()
+                                    .width(300.dp)
                                     .background(
                                         MaterialTheme.colorScheme.primaryContainer
                                     )
