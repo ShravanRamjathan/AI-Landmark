@@ -30,7 +30,7 @@ class LandmarkImageAnalyzer(
      * to process only every 60th frame, optimizing performance.
      */
     override fun analyze(image: ImageProxy) {
-        if(frameSkipCounter%2==0) {
+        if(frameSkipCounter%60==0) {
             val rotationDegrees = image.imageInfo.rotationDegrees
             val bitmap = image.toBitmap().centerCrop(321, 321)
             val results = classifier.classify(bitmap, rotationDegrees)
