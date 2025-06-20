@@ -20,6 +20,7 @@ fun CameraPreview(
                 this.controller = controller
                 controller.bindToLifecycle(lifecycleOwner)
             }
-        }
+        },
+        modifier = modifier
     )
 }

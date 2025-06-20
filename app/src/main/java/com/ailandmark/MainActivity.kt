@@ -1,5 +1,7 @@
 package com.ailandmark
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.ailandmark.data.TfLiteLandmarkClassifier
 import com.ailandmark.domain.Classification
@@ -32,11 +35,19 @@ import com.ailandmark.presentation.CameraPreview
 import com.ailandmark.presentation.LandmarkImageAnalyzer
 import com.ailandmark.ui.theme.AILandmarkTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (!hasCameraPermission()) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.CAMERA),
+                0
+            )
+        }
         setContent {
+
             AILandmarkTheme {
                 var classifications by remember {
                     mutableStateOf(emptyList<Classification>())
@@ -53,7 +64,7 @@ class MainActivity : ComponentActivity() {
                 }
                 val cameraController = remember {
                     LifecycleCameraController(applicationContext).apply {
-                        setEnabledUseCases(CameraController.IMAGE_ANALYSIS)
+                        setEnabledUseCases(CameraController.IMAGE_ANALYSIS  )
                         setImageAnalysisAnalyzer(
                             ContextCompat.getMainExecutor(applicationContext),
                             analyzer
@@ -87,20 +98,17 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun hasCameraPermission() = ContextCompat.checkSelfPermission(
+        this, Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
     AILandmarkTheme {
-        Greeting("Android")
+
     }
 }
